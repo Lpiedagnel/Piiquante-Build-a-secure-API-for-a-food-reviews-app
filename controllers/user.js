@@ -3,87 +3,41 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/User')
 
-exports.signup = async (req, res) => {
-    // our register logic goes here...
-    try {
-        // Get user Input
-        const { email, password } = req.body
-
-        // Validate user input
-        if (!(email && password)) {
-            res.status(400).send("All input is required")
-        }
-
-        // Check if user already exist
-        // Validate if user exist in our database
-        const oldUser = await User.findOne({ email })
-
-        if (oldUser) {
-            return res.status(409).send("User Already Exist. Please Login")
-        }
-
-        // Encrypt user password
-        encryptedPassword = await bcrypt.hash(password, 10)
-
-        // Create user in our database
-        const user = await User.create({
-            email: email.toLowerCase(),
-            password: encryptedPassword,
-        })
-
-        // Create token
-        const token = jwt.sign(
-            { user_id: user._id, email},
-            process.env.TOKEN_KEY,
-            {
-                expiresIn: "24h",
-            }
-        )
-        // Save user token
-        user.token = token
-
-        // Return new user
-        res.status(201).json(user)
-
-        // Send error if try fail
-    } catch (err) {
-        console.log(err)
-    }
+exports.signup = (req, res) => {
+    bcrypt.hash(req.body.password, 10)
+      .then(hash => {
+        const user = new User({
+          email: req.body.email,
+          password: hash
+        });
+        user.save()
+          .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+          .catch(error => res.status(400).json({ error }));
+      })
+      .catch(error => res.status(500).json({ error }));
 }
 
 exports.login = async (req, res) => {
-    try {
-        // Get user input
-        const { email, password } = req.body
-
-        // Validate user input
-        if (!(email && password)) {
-            res.status(400).send("All input is required")
-        }
-
-        // Validate if user exist in our database
-        const user = await User.findOne({ email })
-
-        if (user && (await bcrypt.compare(password, user.password))) {
-            // Create token
-            const token = jwt.sign(
-                {user_id: user_id, email},
-                process.env.TOKEN_KEY,
-                {
-                    expiresIn: "24H"
-                }
-            )
-
-            // Save user token
-            user.token = token
-
-            // user
-            res.status(200).json(user)
-        } // If credentials wrong
-        res.status(400).send("Invalid Credentials")
-
-    // Send error if try failed
-    } catch (err) {
-        console.log(err)
-    }
+    User.findOne({ email: req.body.email })
+        .then(user => {
+            if (!user) {
+                return res.status(401).json({ error: 'Utilisateur non trouvé !' });
+            }
+            bcrypt.compare(req.body.password, user.password)
+                .then(valid => {
+                    if (!valid) {
+                        return res.status(401).json({ error: 'Mot de passe incorrect !' });
+                    }
+                    res.status(200).json({
+                        userId: user._id,
+                        token: jwt.sign(
+                            { userId: user._id },
+                            process.env.TOKEN_KEY,
+                            { expiresIn: '24h' }
+                        )
+                    });
+                })
+                .catch(error => res.status(500).json({ error }));
+        })
+    .catch(error => res.status(500).json({ error }));
 }
