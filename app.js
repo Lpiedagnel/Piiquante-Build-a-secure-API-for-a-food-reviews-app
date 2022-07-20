@@ -1,13 +1,12 @@
 require('dotenv').config()
 
-const express = require('express');
-const mongoose = require('mongoose');
+const express = require('express')
+const mongoose = require('mongoose')
 const path = require('path')
 const mongoString = process.env.DATABASE_URL
 
-const userRoutes = require('./routes/user');
-const sauceRoutes = require('./routes/sauce');
-const { application } = require('express');
+const userRoutes = require('./routes/user')
+const sauceRoutes = require('./routes/sauce')
 
 
 mongoose.connect(mongoString);

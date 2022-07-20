@@ -3,7 +3,7 @@ const fs = require('fs')
 
 // POST
 exports.createSauce = (req, res, next) => {
-    const sauceObject = JSON.parse(req.body.thing)
+    const sauceObject = JSON.parse(req.body.sauce)
     delete sauceObject._id
     delete sauceObject._userId
     const sauce = new Sauce({
@@ -12,8 +12,8 @@ exports.createSauce = (req, res, next) => {
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     })
     sauce.save()
-    .then(() => { res.status(201).JSON({message : "Sauce enregistrée !"})})
-    .catch(error => { res.status(400).JSON({ error })})
+    .then(() => { res.status(201).json({message : "Sauce enregistrée !"})})
+    .catch(error => { res.status(400).json({ error })})
 }
 
 // GET ONE
