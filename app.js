@@ -30,10 +30,6 @@ app.use((req, res, next) => {
     next()
 })
 
-app.listen(3000, () => {
-    console.log(`Server Started at ${3000}`)
-})
-
 app.use('/api/auth', userRoutes)
 app.use('/api/sauces', sauceRoutes)
 app.use('/images', express.static(path.join(__dirname, 'images')))
