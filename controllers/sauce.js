@@ -90,3 +90,19 @@ exports.deleteSauce = (req, res, next) => {
         res.status(500).json({ error })
     })
 }
+
+// POST LIKE
+
+exports.likeSauce = (req, res, next) => {
+    Sauce.findOne({_id: req.params.id})
+    .then((sauce) => {
+        let likes = sauce.likes
+        let dislikes = sauce.dislikes
+        let usersLiked = sauce.usersLiked
+        console.log(likes, dislikes, usersLiked)
+        res.status(200).json({ message : 'Likes modifiés !'})
+    })
+    .catch((error) => {
+        res.status(400).json({ error })
+    })
+}
