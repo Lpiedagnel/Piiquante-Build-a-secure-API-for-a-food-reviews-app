@@ -54,7 +54,7 @@ exports.getAllSauce = (req, res, next) => {
 // PUT
 exports.modifySauce = (req, res, next) => {
     const sauceObject = req.file ? {
-        ...JSON.parse(req.body.thing),
+        ...JSON.parse(req.body.sauce),
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body }
 
@@ -93,61 +93,6 @@ exports.deleteSauce = (req, res, next) => {
         res.status(500).json({ error })
     })
 }
-
-/*
-// POST LIKE
-
-exports.likeSauce = (req, res, next) => {
-    
-    Sauce.findOne({_id: req.params.id})
-    .then((sauce) => {
-        const userId = req.body.userId
-        let likes = sauce.likes
-        let dislikes = sauce.dislikes
-        let usersLiked = sauce.usersLiked
-        let usersDisliked = sauce.usersDisliked
-
-        // Verify is user already like
-        
-        // Update
-
-        // Like
-        if (req.body.like === 1) {
-            likes += 1
-            usersLiked.push(userId)
-            sauce.updateOne({
-                likes: sauce.likes + 1,
-                usersLiked: usersLiked
-            })
-            .then(() => console.log(`Valeur ajoutée. Le nombre de likes s'élève à ${likes} et les utilisateurs qui ont likés ont pour ID : ${usersLiked}`))
-            .catch((err) => console.log(err))
-        
-         // Dislike
-        } else if (req.body.like === -1) {
-            dislikes += 1
-            usersDisliked.push(userId)
-            sauce.updateOne({
-                dislikes: sauce.likes + 1,
-                usersDisliked: usersDisliked
-            })
-            .then(() => console.log(`Valeur ajoutée. Le nombre de likes s'élève à ${dislikes} et les utilisateurs qui ont likés ont pour ID : ${usersDisliked}`))
-            .catch((err) => console.log(err))
-
-
-        } else {
-            console.log('On enlève une valeur !')
-
-            
-        }
-        
-        res.status(200).json({ message : 'Likes modifiés !'})
-    })
-    .catch((error) => {
-        res.status(400).json({ error })
-    })
-}
-
-*/
 
 exports.likeSauce = (req, res, next) => {
 
