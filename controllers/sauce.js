@@ -92,7 +92,7 @@ exports.deleteSauce = (req, res, next) => {
     })
 }
 
-exports.likeSauce = (req, res) => { // Peut-être regarder le Switch Case pour gérer ce cas de figure et raccourcir le code
+exports.likeSauce = (req, res) => {
 
     // Find sauce and creates variables
     Sauce.findOne({_id: req.params.id})
@@ -107,33 +107,33 @@ exports.likeSauce = (req, res) => { // Peut-être regarder le Switch Case pour g
         let userAlreadyLike = usersLiked.includes(userId)
         let userAlreadyDislike = usersDisliked.includes(userId)
 
-        // Add Like
-        if (req.body.like === 1 && !userAlreadyLike) {
-            likesCount += 1
-            usersLiked.push(userId)
-            sauce.updateOne({
-                likes: likesCount,
-                usersLiked: usersLiked
-            })
-            .then(() => console.log(`Valeur ajoutée. Le nombre de likes s'élève à ${likesCount} et les utilisateurs qui ont likés ont pour ID : ${usersLiked}`))
-            .catch((err) => console.log(err))
+        switch (true) {
+            // Add Like
+            case (req.body.like === 1 && !userAlreadyLike) :
+                likesCount += 1
+                usersLiked.push(userId)
+                sauce.updateOne({
+                    likes: likesCount,
+                    usersLiked: usersLiked
+                })
+                .then(() => console.log(`Valeur ajoutée. Le nombre de likes s'élève à ${likesCount} et les utilisateurs qui ont likés ont pour ID : ${usersLiked}`))
+                .catch((err) => console.log(err))
+                break
 
-        // Add dislike
-        } else if (req.body.like === -1 && !userAlreadyDislike) {
-            dislikesCount += 1
-            usersDisliked.push(userId)
-            sauce.updateOne({
-                dislikes: dislikesCount,
-                usersDisliked: usersDisliked
-            })
-            .then(() => console.log(`Valeur ajoutée. Le nombre de dislikes s'élève à ${dislikesCount} et les utilisateurs qui ont dislikés ont pour ID : ${usersDisliked}`))
-            .catch((err) => console.log(err))
+            // Add dislike
+            case (req.body.like === -1 && !userAlreadyDislike) :
+                dislikesCount += 1
+                usersDisliked.push(userId)
+                sauce.updateOne({
+                    dislikes: dislikesCount,
+                    usersDisliked: usersDisliked
+                })
+                .then(() => console.log(`Valeur ajoutée. Le nombre de dislikes s'élève à ${dislikesCount} et les utilisateurs qui ont dislikés ont pour ID : ${usersDisliked}`))
+                .catch((err) => console.log(err))
+                break
 
-        // Delete like or dislike
-        } else if (req.body.like === 0) {
-
-            // Delete like
-            if (userAlreadyLike) {
+            // Delete Like
+            case (req.body.like === 0 && userAlreadyLike) :
                 likesCount -= 1
                 // Splice user
                 usersLiked.splice(usersLiked.indexOf(userId), 1)
@@ -144,9 +144,10 @@ exports.likeSauce = (req, res) => { // Peut-être regarder le Switch Case pour g
                 })
                 .then(() => console.log(`Like enlevée. Le nombre de likes s'élève à ${likesCount} et les utilisateurs qui ont likés ont pour ID : ${usersLiked}`))
                 .catch((err) => console.log(err))
-            
+                break
+
             // Delete dislike
-            } else if (userAlreadyDislike) {
+            case (req.body.like === 0 && userAlreadyDislike) :
                 dislikesCount -= 1
                 // Splice user
                 usersDisliked.splice(usersDisliked.indexOf(userId), 1)
@@ -157,13 +158,14 @@ exports.likeSauce = (req, res) => { // Peut-être regarder le Switch Case pour g
                 })
                 .then(() => console.log(`Dislike retirée. Le nombre de dislikes s'élève à ${dislikesCount} et les utilisateurs qui ont dislikés ont pour ID : ${usersDisliked}`))
                 .catch((err) => console.log(err))
-            }
+                break
 
-        // If the user already submit
-        } else {
-            res.status(500).console.log('The user already submit his review')
+            default: 
+                res.status(500).console.log('The user already submit his review')
         }
         res.status(200).json({ message: "The user click on the like or dislike button" })
     })
+
+    // Fail to find the sauce
     .catch((err) => res.status(404).json({ err }))
 }
