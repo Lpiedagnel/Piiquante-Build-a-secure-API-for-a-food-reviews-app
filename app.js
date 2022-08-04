@@ -4,6 +4,7 @@ const express = require('express')
 const helmet = require('helmet')
 const mongoose = require('mongoose')
 const path = require('path')
+const rateLimit = require('express-rate-limit')
 const mongoString = process.env.DATABASE_URL
 
 const userRoutes = require('./routes/user')
@@ -22,6 +23,12 @@ database.once('connected', () => {
 })
 const app = express()
 
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    message: "Vous avez envoyé trop de requêtes au serveur. Réessayez plus tard."
+})
+
 app.use(express.json())
 app.use(helmet())
 
@@ -33,6 +40,7 @@ app.use((req, res, next) => {
     next()
 })
 
+app.use(limiter)
 app.use('/api/auth', userRoutes)
 app.use('/api/sauces', sauceRoutes)
 app.use('/images', express.static(path.join(__dirname, 'images')))
