@@ -17,6 +17,6 @@ module.exports = (req, res, next) => {
     if(passwordSchema.validate(req.body.password)) {
         next()
     } else {
-        return res.status(400).json({error : `Le mot de passe doit contenir entre 5 et 35 caractères, une lettre majuscule, une lettre majuscule et un chiffre, et ne doit pas contenir d\'espace, ni de symbole. Le problème vient de ${passwordSchema.validate(req.body.password, { list: true })}`})
+        return res.status(400).json({error : `Le mot de passe doit contenir entre 5 et 35 caractères, une lettre majuscule, une lettre minuscule et un chiffre, et ne doit pas contenir d\'espace, ni de symbole. Le problème vient de ${passwordSchema.validate(req.body.password, { list: true })}`})
     }
 }

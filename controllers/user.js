@@ -1,13 +1,18 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const cryptoJs = require('crypto-js')
 const User = require('../models/User')
 require('dotenv').config()
 
+// Encrypt email
 exports.signup = (req, res) => {
+    // Encrypt email
+    const emailCryptosJs = cryptoJs.HmacSHA256(req.body.email, process.env.CRYPTO_KEY).toString()
+    // Encrypt password
     bcrypt.hash(req.body.password, 10)
       .then(hash => {
         const user = new User({
-          email: req.body.email,
+          email: emailCryptosJs,
           password: hash
         });
         user.save()
@@ -18,7 +23,8 @@ exports.signup = (req, res) => {
 }
 
 exports.login = (req, res) => {
-    User.findOne({ email: req.body.email })
+    const emailCryptosJs = cryptoJs.HmacSHA256(req.body.email, process.env.CRYPTO_KEY).toString()
+    User.findOne({ email: emailCryptosJs })
         .then(user => {
             if (!user) {
                 return res.status(401).json({ error: 'Utilisateur non trouvé !' })
