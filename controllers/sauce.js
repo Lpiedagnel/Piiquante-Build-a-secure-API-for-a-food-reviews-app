@@ -1,6 +1,7 @@
 const Sauce = require('../models/Sauce')
 const User = require('../models/User')
 const fs = require('fs')
+const { body, validationResult } = require('express-validator')
 
 // POST
 exports.createSauce = (req, res, next) => {
