@@ -1,11 +1,11 @@
 const passwordValidator = require('password-validator');
 
-// Create a schema and add properties to it
+// Create a schema to verify password and add properties to it
 const passwordSchema = new passwordValidator();
 
 passwordSchema
     .is().min(5)                                    // Minimum length 5
-    .is().max(35)                                  // Maximum length 35
+    .is().max(35)                                   // Maximum length 35
     .has().uppercase()                              // Must have uppercase letters
     .has().lowercase()                              // Must have lowercase letters
     .has().digits(1)                                // Must have at least 1 digit

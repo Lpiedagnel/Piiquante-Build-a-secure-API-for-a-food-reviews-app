@@ -1,11 +1,13 @@
 const multer = require('multer')
 
+// Convert files types
 const MIME_TYPES = {
     'image/jpg': 'jpg',
     'image/jpeg': 'jpg',
     'image/png': 'png'
 }
 
+// Save image
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, 'images')

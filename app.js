@@ -23,9 +23,10 @@ database.once('connected', () => {
 })
 const app = express()
 
+// Limit the number of requests to prevent brute force
 const limiter = rateLimit({
 	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+	max: 200, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
     message: "Vous avez envoyé trop de requêtes au serveur. Réessayez plus tard."
 })
 

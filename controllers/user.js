@@ -4,8 +4,8 @@ const cryptoJs = require('crypto-js')
 const User = require('../models/User')
 require('dotenv').config()
 
-// Encrypt email
-exports.signup = (req, res) => {
+// Register the user in the database
+exports.signup = (req, res, next) => {
     // Encrypt email
     const emailCryptosJs = cryptoJs.HmacSHA256(req.body.email, process.env.CRYPTO_KEY).toString()
     // Encrypt password
@@ -22,7 +22,8 @@ exports.signup = (req, res) => {
       .catch(error => res.status(500).json({ error }))
 }
 
-exports.login = (req, res) => {
+// Find user in the database and login it
+exports.login = (req, res, next) => {
     const emailCryptosJs = cryptoJs.HmacSHA256(req.body.email, process.env.CRYPTO_KEY).toString()
     User.findOne({ email: emailCryptosJs })
         .then(user => {

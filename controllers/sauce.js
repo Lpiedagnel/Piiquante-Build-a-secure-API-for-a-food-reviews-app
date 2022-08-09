@@ -2,7 +2,7 @@ const Sauce = require('../models/Sauce')
 const User = require('../models/User')
 const fs = require('fs')
 
-// POST
+// Create a sauce and store it in the database
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce)
     delete sauceObject._id
@@ -17,7 +17,7 @@ exports.createSauce = (req, res, next) => {
     .catch(error => { res.status(400).json({ error })})
 }
 
-// GET ONE
+// Get specific sauce with ID
 exports.getOneSauce = (req, res, next) => {
     Sauce.findOne({
         _id: req.params.id
@@ -34,7 +34,7 @@ exports.getOneSauce = (req, res, next) => {
     )
 }
 
-// GET ALL
+// Get all sauces in the database
 exports.getAllSauce = (req, res, next) => {
     Sauce.find().then(
         (sauces) => {
@@ -49,7 +49,7 @@ exports.getAllSauce = (req, res, next) => {
     )
 }
 
-// PUT
+// Find and modify a sauce with put method
 exports.modifySauce = (req, res, next) => {
     const sauceObject = req.file ? {
         ...JSON.parse(req.body.sauce),
@@ -72,12 +72,12 @@ exports.modifySauce = (req, res, next) => {
     })
 }
 
-// DELETE
+// Get specific sauce and delete with delete method.
 exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id})
     .then(sauce => {
         if (sauce.userId != req.auth.userId) {
-            res.status(401).json({message: "Utilisateur non autorisé !"})
+            res.status(403).json({message: "Utilisateur non autorisé !"})
         } else {
             const filename = sauce.imageUrl.split('/images/')[1]
             fs.unlink(`images/${filename}`, () => {
@@ -92,6 +92,7 @@ exports.deleteSauce = (req, res, next) => {
     })
 }
 
+// Like and dislike sauce
 exports.likeSauce = (req, res) => {
 
     // Find sauce and creates variables
@@ -161,7 +162,7 @@ exports.likeSauce = (req, res) => {
                 break
 
             default: 
-                res.status(500).console.log('The user already submit his review')
+                res.status(403).console.log('The user already submit his review')
         }
         res.status(200).json({ message: "The user click on the like or dislike button" })
     })
